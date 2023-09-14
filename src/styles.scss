@@ -1,1 +1,26 @@
 /* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+@import "app/custom-theme.scss";
+.my-primary-text {
+ color: mat.get-color-from-palette($my-primary);
+}
+.my-accent-text {
+ color: mat.get-color-from-palette($my-accent);
+}
+.margin-right-2 {
+  margin-right: 2vw !important;
+ }
+ .margin-top-5 {
+  margin-top: 5vh !important;
+ }
+
+ mat-list-item:nth-child(odd){
+  background-color:mat.get-color-from-palette($my-primary-light);
+ }
+ mat-list-item:nth-child(even) {
+  background-color:mat.get-color-from-palette($my-accent-light);
+ }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

@@ -1,0 +1,19 @@
+<mat-card>
+
+  <mat-card-content>
+
+    <div class = "top-image">
+      <img src="assets/images/company-logo.png">
+    </div>
+
+
+    <mat-card-header class="app-accent" layout="row">
+      <mat-card-title>
+        <span class="mat-headline">{{msg}}</span>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-list flex>
+      <app-vendors-list [vendors]="vendors"></app-vendors-list>
+    </mat-list>
+  </mat-card-content>
+</mat-card>
