@@ -7,4 +7,5 @@ export interface Vendor {
   phone: string;
   type: string;
   email: string;
+  address1 : string;
 }

@@ -1,19 +1,37 @@
 <mat-card>
-
-  <mat-card-content>
-
-    <div class = "top-image">
-      <img src="assets/images/company-logo.png">
+  <mat-card-content *ngIf="hideEditForm">
+    <div class="top-image">
+      <img src="assets/images/company-logo.png" />
     </div>
 
 
-    <mat-card-header class="app-accent" layout="row">
-      <mat-card-title>
-        <span class="mat-headline">{{msg}}</span>
-      </mat-card-title>
-    </mat-card-header>
     <mat-list flex>
-      <app-vendors-list [vendors]="vendors"></app-vendors-list>
+      <app-vendors-list [vendors]="vendors" (selected)="select($event)"></app-vendors-list>
     </mat-list>
   </mat-card-content>
+  <mat-card-header class="app-accent" layout="row">
+    <mat-card-title>
+      <span class="mat-headline my-accent-text">{{ msg }}</span>
+    </mat-card-title>
+  </mat-card-header>
+  <ng-template #loading class="my-accent-text">Loading Employees from server...</ng-template>
+</mat-card>
+
+<mat-card *ngIf="!hideEditForm">
+  <div class="top-image">
+    <img src="assets/images/company-logo.png" />
+  </div>
+
+  <mat-card-content>
+    <app-vendordetail
+    [selectedVendor]="vendor"
+    (cancelled)="cancel('cancelled')"
+    (saved)="update($event)">
+    </app-vendordetail>
+  </mat-card-content>
+  <mat-card-header>
+    <mat-card-title>
+      <span class="mat-headline">{{ msg }}</span>
+    </mat-card-title>
+  </mat-card-header>
 </mat-card>

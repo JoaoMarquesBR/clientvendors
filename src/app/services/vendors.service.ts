@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { enviroment } from '../enviroment';
 import { Observable, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
+import { Vendor } from '../entities/Vendor';
 
 @Injectable({
   providedIn: 'root'
@@ -12,13 +13,19 @@ export class VendorsService {
   status: string;
 
   constructor(private http : HttpClient) {
-      this.resourceURL = `${enviroment.baseurl}vendors`
+      this.resourceURL = `${enviroment.baseurl}api/vendor`
       this.status = '';
    }
 
-  getVendors(): Observable<any>{
+  getVendors(): Observable<Vendor[]>{
     return this.http
-    .get(this.resourceURL)
+    .get<Vendor[]>(this.resourceURL)
+    .pipe(retry(1), catchError(this.handleError));
+  }
+
+  updateVendor(vendor: Vendor): Observable<Vendor>{
+    return this.http
+    .put<Vendor>(this.resourceURL,vendor)
     .pipe(retry(1), catchError(this.handleError));
   }
 

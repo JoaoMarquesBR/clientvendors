@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Vendor } from 'src/app/entities/Vendor';
 
 @Component({
@@ -8,6 +8,7 @@ import { Vendor } from 'src/app/entities/Vendor';
       *ngFor="let vendor of vendors"
       layout="row"
       class="pad-xs mat-title"
+      (click) = "selected.emit(vendor)"
     >
     {{vendor.id}}  {{vendor.name}}
     </mat-list-item>
@@ -16,4 +17,5 @@ import { Vendor } from 'src/app/entities/Vendor';
 })
 export class VendorsListComponent {
   @Input() vendors?: Vendor[];
+  @Output() selected = new EventEmitter();
 }
