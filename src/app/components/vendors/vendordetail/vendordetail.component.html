@@ -56,5 +56,9 @@
         Cancel
       </button>
     </span>
+    <span>
+      <button *ngIf="selectedVendor.id" mat-raised-button type="button"
+      (click)="deleted.emit(selectedVendor)">Delete</button>
+      </span>
   </div>
 </form>

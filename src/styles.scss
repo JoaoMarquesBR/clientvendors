@@ -22,5 +22,16 @@
   background-color:mat.get-color-from-palette($my-accent-light);
  }
 
+ .padtop15 {
+  padding-top: 15vh;
+  }
+.material-icons.addicon {
+  font-size: 15vw;
+  position: absolute;
+  bottom: 5vh;
+  right: 5vw;
+  padding: 10vw;
+  }
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

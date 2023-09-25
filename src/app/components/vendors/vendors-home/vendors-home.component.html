@@ -16,7 +16,11 @@
   </mat-card-header>
   <ng-template #loading class="my-accent-text">Loading Employees from server...</ng-template>
 </mat-card>
-
+<div class="pad5" *ngIf="hideEditForm">
+  <mat-icon (click)="newVendor()" matTooltip="Add New Employee" class="addicon" color="primary">
+  control_point
+  </mat-icon>
+ </div>
 <mat-card *ngIf="!hideEditForm">
   <div class="top-image">
     <img src="assets/images/company-logo.png" />
@@ -26,7 +30,8 @@
     <app-vendordetail
     [selectedVendor]="vendor"
     (cancelled)="cancel('cancelled')"
-    (saved)="update($event)">
+    (saved)="save($event)"
+    (deleted)="delete($event)">
     </app-vendordetail>
   </mat-card-content>
   <mat-card-header>
