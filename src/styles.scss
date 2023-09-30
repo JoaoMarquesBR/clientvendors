@@ -22,6 +22,8 @@
   background-color:mat.get-color-from-palette($my-accent-light);
  }
 
+ mat-form-field { margin-left:5%;width:90% }
+
  .padtop15 {
   padding-top: 15vh;
   }

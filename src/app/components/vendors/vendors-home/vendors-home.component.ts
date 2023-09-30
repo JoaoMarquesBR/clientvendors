@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
-import { Observable, catchError } from 'rxjs';
 import { Vendor } from 'src/app/entities/Vendor';
-import { VendorsService } from 'src/app/services/vendors.service';
+import { NewVendorService } from 'src/app/services/newVendorService';
 
 @Component({
   selector: 'app-vendors-home',
@@ -10,22 +8,16 @@ import { VendorsService } from 'src/app/services/vendors.service';
   styleUrls: ['./vendors-home.component.scss']
 })
 export class VendorsHomeComponent implements OnInit {
-  vendors : Array<Vendor>
+  vendors : Vendor[] = []
   vendor : Vendor
-  vendors$?:Observable<Vendor[]>
   msg : string
   hideEditForm : boolean
   todo? : string
 
-  constructor(private service : VendorsService){
-    this.vendors=[];
-
-    (this.vendors$=this.service.getVendors()),
-    catchError((err)=> (this.msg=err.message))
-
+  constructor(private service : NewVendorService){
     this.msg='';
     this.hideEditForm = true;
-
+    this.todo = '';
     this.vendor={
       id : 0,
       name: '',
@@ -38,20 +30,77 @@ export class VendorsHomeComponent implements OnInit {
       address1:'',
     }
   }
-
   ngOnInit(): void {
+    this.getAll();
+  }
 
-    this.service.getVendors().subscribe({
-      next:(payload:any)=>{
-        this.vendors = payload;
-        this.msg = "Vendors loaded"
+  select(vendor: Vendor): void {
+    this.hideEditForm = false;
+    this.msg=vendor.id +" selected"
+    this.vendor = vendor;
+    this.todo="update"
+  }
 
-        // console.log(this.vendors)
+  cancel(msg?: string): void {
+    msg ? (this.msg = 'Operation cancelled') : null;
+    this.hideEditForm = !this.hideEditForm;
+  }
+
+  update(newVendorValues: Vendor): void {
+    this.service.update(newVendorValues).subscribe({
+      // Create observer object
+      next: (vendor: Vendor) => {
+        this.msg = `Employee ${vendor.id} updated!`;
       },
-      error: (err: Error) => (this.msg = `Get failed! - ${err.message}`),
-      complete: () => {},
-    })
+      error: (err: Error) => (this.msg = `Update failed! - ${err.message}`),
+      complete: () => (this.hideEditForm = !this.hideEditForm),
+    });
+  }
 
+  getAll(passedMsg: string = ''): void {
+    this.service.getAll().subscribe({
+      // Create observer object
+      next: (vendors: Vendor[]) => {
+        this.vendors = vendors;
+      },
+      error: (err: Error) =>
+        (this.msg = `Couldn't get vendors - ${err.message}`),
+      complete: () =>
+        passedMsg ? (this.msg = passedMsg) : (this.msg = `vendors loaded!`),
+    });
+  }
+
+  save(vendor: Vendor): void {
+    vendor.id ? this.update(vendor) : this.add(vendor);
+  } // save
+
+  add(vendor: Vendor): void {
+    vendor.id = 0;
+    this.service.create(vendor).subscribe({
+      // Create observer object
+      next: (vendor: Vendor) => {
+        this.getAll(`Vendor ${vendor.id} added!`);
+      },
+      error: (err: Error) =>
+        (this.msg = `Vendors not added! - ${err.message}`),
+      complete: () => (this.hideEditForm = !this.hideEditForm), // this calls unsubscribe
+    });
+
+  }
+
+  delete(vendor: Vendor): void {
+    this.service.delete(vendor.id).subscribe({
+      // Create observer object
+      next: (numOfVendorsDeleted: number) => {
+        let msg: string = '';
+        numOfVendorsDeleted === 1
+          ? (msg = `Vendor ${vendor.name} deleted!`)
+          : (msg = `Vendor ${vendor.name} not deleted!`);
+        this.getAll(msg);
+      },
+      error: (err: Error) => (this.msg = `Delete failed! - ${err.message}`),
+      complete: () => (this.hideEditForm = !this.hideEditForm),
+    });
   }
 
   newVendor():void{
@@ -69,51 +118,4 @@ export class VendorsHomeComponent implements OnInit {
     this.hideEditForm = !this.hideEditForm
     this.msg = 'New Vendor'
   }
-
-  save(vendor : Vendor):void{
-    this.vendor.id? this.update(vendor): this.add(vendor)
-  }
-
-  select(vendor: Vendor):void{
-    this.hideEditForm = false;
-    this.msg=vendor.id +" selected"
-    this.vendor = vendor;
-    this.todo="update"
-  }
-
-  cancel(msg?: string): void {
-    msg ? (this.msg = 'Operation cancelled') : null;
-    this.hideEditForm = !this.hideEditForm;
-  }
-
-  add(vendor : Vendor):void{
-    vendor.id=0;
-    this.service.addVendor(vendor).subscribe({
-      next: (emp : Vendor)=>{
-        this.msg = `Vendor ${emp.name} was added!`
-      },
-      error: (err: Error)=>(this.msg=`Vendor not added - ${err.message}`),
-      complete:()=>(this.hideEditForm = !this.hideEditForm)
-    })
-  }
-
-  delete(vendor: Vendor): void {
-    this.service.deleteVendor(vendor.id).subscribe({
-      next:(numOfVendorsDeleted : number)=>{
-        numOfVendorsDeleted ===1 ? (this.msg=`Vendor ${vendor.name} deleted!!`) : (this.msg=`Vendor not deleted}`)
-      },
-      error: (err : Error)=> (this.hideEditForm = !this.hideEditForm),
-      complete:()=>(this.hideEditForm = !this.hideEditForm),
-    })
-
-  }
-
-  update(newVendorValues: Vendor): void {
-
-    this.service.updateVendor(newVendorValues).subscribe({
-      next: (vendor: Vendor) => (this.msg = `Vendor ${vendor.name} updated!`),
-      error: (err: Error) => (this.msg = `Update failed! - ${err.message}`),
-      complete: () => (this.hideEditForm = !this.hideEditForm),
-    })
-  } //
 }

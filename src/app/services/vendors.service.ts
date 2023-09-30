@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, numberAttribute } from '@angular/core';
-import { enviroment } from '../enviroment';
+import { BASEURL } from '../enviroment';
 import { Observable, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
 import { Vendor } from '../entities/Vendor';
@@ -13,7 +13,7 @@ export class VendorsService {
   status: string;
 
   constructor(private http : HttpClient) {
-      this.resourceURL = `${enviroment.baseurl}api/vendor`
+      this.resourceURL = `${BASEURL}api/vendor`
       this.status = '';
    }
 
