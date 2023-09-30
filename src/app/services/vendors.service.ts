@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { enviroment } from '../enviroment';
+import { Injectable, numberAttribute } from '@angular/core';
+import { BASEURL } from '../enviroment';
 import { Observable, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
 import { Vendor } from '../entities/Vendor';
@@ -13,7 +13,7 @@ export class VendorsService {
   status: string;
 
   constructor(private http : HttpClient) {
-      this.resourceURL = `${enviroment.baseurl}api/vendor`
+      this.resourceURL = `${BASEURL}api/vendor`
       this.status = '';
    }
 
@@ -29,6 +29,18 @@ export class VendorsService {
     .pipe(retry(1), catchError(this.handleError));
   }
 
+  deleteVendor(id : number):Observable<number>{
+    return this.http
+    .delete<number>(`${this.resourceURL}/${id}`)
+    .pipe(retry(1),catchError(this.handleError))
+  }
+
+
+  addVendor(vendor : Vendor):Observable<Vendor>{
+    return this.http
+    .post<Vendor>(`${this.resourceURL}`,vendor)
+    .pipe(retry(1),catchError(this.handleError))
+  }
 
   handleError(error: any) {
     let errorMessage = '';

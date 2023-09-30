@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators,Validator } from '@angular/forms';
 import { Vendor } from 'src/app/entities/Vendor';
-
+import { ValidatePhone } from 'src/app/validators/PhoneValidator';
+import { PostalCodeValidator } from 'src/app/validators/PostalCodeValidator';
 @Component({
   selector: 'app-vendordetail',
   templateUrl: './vendordetail.component.html',
@@ -22,6 +23,7 @@ export class VendordetailComponent implements OnInit{
   @Input() vendors: Vendor[] | null = null;
   @Output() cancelled = new EventEmitter();
   @Output() saved = new EventEmitter();
+  @Output() deleted = new EventEmitter();
 
   vendorForm: FormGroup;
   name : FormControl;
@@ -54,10 +56,10 @@ export class VendordetailComponent implements OnInit{
     this.address1 = new FormControl('');
     this.city = new FormControl('');
     this.province = new FormControl('');
-    this.postalcode = new FormControl('');
-    this.phone = new FormControl('');
+    this.postalcode = new FormControl('',Validators.compose([Validators.required,PostalCodeValidator]));
+    this.phone = new FormControl('',Validators.compose([Validators.required,ValidatePhone]));
     this.type = new FormControl('');
-    this.email = new FormControl('');
+    this.email = new FormControl('',Validators.compose([Validators.required,Validators.email]));
 
     this.vendorForm = new FormGroup({
       name: this.name,
@@ -72,7 +74,7 @@ export class VendordetailComponent implements OnInit{
 
   }
 
-  updateSelectedEmployee(): void {
+  updateSelectedVendor(): void {
     this.selectedVendor.name = this.vendorForm.value.name;
     this.selectedVendor.city = this.vendorForm.value.city;
     this.selectedVendor.province = this.vendorForm.value.province;
