@@ -9,6 +9,7 @@ import { HomeComponent } from './components/home/home.component';
 import { MatComponentsModuleModule } from './shared/mat-components-module/mat-components-module.module';
 import { VendorsHomeComponent } from './components/vendors/vendors-home/vendors-home.component';
 import { VendorsModule } from './components/vendors/vendors.module';
+import { ProductModule } from './components/product/product.module';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { VendorsModule } from './components/vendors/vendors.module';
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    VendorsModule
+    VendorsModule,
+    ProductModule
   ],
   providers: [],
   bootstrap: [AppComponent]
