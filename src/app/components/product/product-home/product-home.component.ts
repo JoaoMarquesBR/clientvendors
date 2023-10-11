@@ -59,7 +59,9 @@ export class ProductHomeComponent{
    */
   save(product: Product): void {
     console.log(product)
-    product.id ? this.update(product) : this.add(product);
+    let result = this.products.find(x=> x.id == product.id)
+
+    result ? this.update(product) : this.add(product);
   } // save
   /**
    * add - send expense to service, receive newid back
@@ -70,7 +72,7 @@ export class ProductHomeComponent{
       // observer object
       next: (exp: Product) => {
         let msg = '';
-        exp.id > 0
+        exp.id != null
           ? (msg = `Expense ${exp.id} added!`)
           : (msg = `Expense ${exp.id} not added!`);
         this.getAllProducts(msg);
