@@ -10,6 +10,7 @@ import { MatComponentsModuleModule } from './shared/mat-components-module/mat-co
 import { VendorsHomeComponent } from './components/vendors/vendors-home/vendors-home.component';
 import { VendorsModule } from './components/vendors/vendors.module';
 import { ProductModule } from './components/product/product.module';
+import { GeneratorComponent } from './components/generator/generator.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { ProductModule } from './components/product/product.module';
     HttpClientModule,
     BrowserAnimationsModule,
     VendorsModule,
-    ProductModule
+    ProductModule,
+    GeneratorComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

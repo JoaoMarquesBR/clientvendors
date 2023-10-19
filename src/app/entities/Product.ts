@@ -1,5 +1,5 @@
 export interface Product {
-  id: number;
+  id: string;
   vendorid: number;
   name: string;
   costprice: number;
@@ -10,4 +10,5 @@ export interface Product {
   qoo: number;
   qrcode: string;
   qrcodetxt: string;
+  productid?:string;
 }

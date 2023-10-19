@@ -120,11 +120,11 @@ export class ProductHomeComponent{
   sortExpensesWithObjectLiterals(sort: Sort): void {
     const literals = {
       // sort on id
-      id: () =>
-        (this.dataSource.data = this.dataSource.data.sort(
-          (a: Product, b: Product) =>
-            sort.direction === 'asc' ? a.id - b.id : b.id - a.id // descending
-        )),
+      // id: () =>
+        // (this.dataSource.data = this.dataSource.data.sort(
+        //   (a: Product, b: Product) =>
+        //     sort.direction === 'asc' ? a.id - b.id : b.id - a.id // descending
+        // )),
       // sort on employeeid
       employeeid: () =>
         (this.dataSource.data = this.dataSource.data.sort(
@@ -151,7 +151,7 @@ export class ProductHomeComponent{
 
   newProduct(): void {
     this.product = {
-      id: 0,
+      id: '',
       vendorid : 0,
       costprice:0,
       eoq : 0,

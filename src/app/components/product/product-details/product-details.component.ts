@@ -41,7 +41,7 @@ export class ProductDetailsComponent implements OnInit {
 
 
   @Input() selectedProduct: Product = {
-    id: 0,
+    id: '',
     vendorid: 0,
     name: '',
     costprice: 0,

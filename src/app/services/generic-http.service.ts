@@ -34,12 +34,21 @@ export class GenericHttpService<T> {
       .put<T>(urlWithId, data)
       .pipe(take(1), catchError(this.handleError));
   }
-  delete(id: number): Observable<number> {
+  delete(id: any): Observable<number> {
     const urlWithId = `${BASEURL}/${this.entity}/${id}`;
     return this.http
       .delete<number>(urlWithId)
       .pipe(take(1), catchError(this.handleError));
   }
+
+  getSome(id: number): Observable<T[]> {
+    const urlWithId = `${BASEURL}/${this.entity}/${id}`;
+    return this.http
+    .get<T[]>(urlWithId)
+    .pipe(take(1), catchError(this.handleError));
+    }
+
+
   private handleError(err: HttpErrorResponse) {
     // in a real world app, we may send the server to some remote logging infrastructure
     // instead of just logging it to the console
