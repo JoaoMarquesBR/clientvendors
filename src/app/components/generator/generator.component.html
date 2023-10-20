@@ -18,7 +18,8 @@
       <div *ngIf="pickedEmployee" layout="row">
         <mat-form-field flex>
           <mat-label>Product</mat-label>
-          <mat-select placeholder="Choose Expense" formControlName="expenseid" (selectionChange)="onPickProduct($event)">
+          <mat-select placeholder="Choose Expense" formControlName="expenseid"
+            (selectionChange)="onPickProduct($event)">
             <mat-option *ngFor="let expense of vendorProducts" [value]="expense">
               {{ expense.name }}
             </mat-option>
@@ -27,11 +28,11 @@
 
       </div>
       <br />
-      <div *ngIf="pickedEmployee" layout="row">
+      <div *ngIf="pickedProduct" layout="row">
         <mat-form-field flex>
           <mat-label>Quantity</mat-label>
           <mat-select placeholder="Choose Expense" formControlName="qtyControl" (change)="onPickExpense()">
-            <mat-option *ngFor="let number of numberArray" [value]="qty">
+            <mat-option *ngFor="let number of numberArray" [value]="number">
               {{ number }}
             </mat-option>
           </mat-select>
@@ -41,12 +42,12 @@
 
       <br>
       <div style="text-align: center" *ngIf="hasExpenses">
-        <button mat-raised-button color="primary" (click)="onPickExpense()" style="margin-top: 3vh">
+        <button mat-raised-button color="primary" (click)="addProduct()" style="margin-top: 3vh">
           Add Product
         </button>
       </div>
       <br>
-      <div *ngIf="hasExpenses" class="row">
+      <div *ngIf="hasProducts" class="row">
         <table>
           <tr>
             <th colspan="3" class="pad-xs text-center md-subhead my-primary-text"
@@ -61,7 +62,7 @@
   padding-top: 2vh;
  padding-bottom: 2vh;
   ">
-              Incurred
+              Product
             </td>
             <td style="
   text-align: center;
@@ -69,37 +70,38 @@
  padding-top: 2vh;
   padding-bottom: 2vh;
   ">
-              Description
+              Qty
             </td>
+
             <td style="
   text-align: center;
   width: 20vw;
  padding-top: 2vh;
   padding-bottom: 2vh;
   ">
-              Amount
+              Extended
             </td>
           </tr>
-          <tr *ngFor="let item of selectedProducts">
-            <td class="text-left" style="padding-top: 1vh; padding-bottom: 1vh">
-              {{ item.id }}
+          <tr *ngFor="let item of registeredProducts">
+            <td class="text-left" style="padding-top: 1vh;  text-align: center; padding-bottom: 1vh">
+              {{ item.productid }}
             </td>
-            <td width="700" class="text-left" style="padding-top: 1vh; padding-bottom: 1vh">
-              {{ item.name }}
+            <td width="700" class="text-left" style="padding-top: 1vh;  text-align: center; padding-bottom: 1vh">
+              {{ item.qty }}
             </td>
-            <td style="padding-top: 1vh; padding-bottom: 1vh; text-align: right">
-              {{ item.costprice | currency : "USD" : "symbol" : "1.2-2" }}
+            <td style="padding-top: 1vh; padding-bottom: 1vh; text-align: center; text-align: right">
+              {{ item.price | currency : "USD" : "symbol" : "1.2-2" }}
             </td>
           </tr>
           <tr>
             <td colspan="2" style="text-align: right">Total:</td>
-            <td class="my-accent-text" style="font-weight: 600; text-align: right">
+            <td class="my-accent-text" style="font-weight: 600; text-align: center; text-align: right">
               {{ total | currency : "USD" : "symbol" : "1.2-2" }}
             </td>
           </tr>
         </table>
       </div>
-      <div style="text-align: center" *ngIf="hasExpenses">
+      <div style="text-align: center" *ngIf="hasProducts">
         <button mat-raised-button color="primary" (click)="createReport()" style="margin-top: 3vh">
           Save Report
         </button>

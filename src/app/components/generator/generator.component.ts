@@ -39,11 +39,17 @@ export class GeneratorComponent {
   selectedProducts: Product[] = []; // expenses that being displayed currently in app
   selectedProduct: Product; // the current selected expense
   selectedVendor: Vendor; // the current selected employee
+  registeredProducts: PurchaseOrderLineItem[]= [];
+  qtySelected : number = 1;
+
   // misc
   pickedExpense: boolean;
+  pickedProduct: boolean = false;
   pickedEmployee: boolean;
   generated: boolean;
   hasExpenses: boolean;
+  hasProducts: boolean = false;
+
   msg: string;
   total: number;
   reportno: number = 0;
@@ -103,6 +109,7 @@ export class GeneratorComponent {
     this.onPickExpense(); // sets up subscription for dropdown click
     this.msg = 'loading employees from server...';
     this.getAllEmployees();
+    this.onPickProduct(null);
   } // ngOnInit
   ngOnDestroy(): void {
     if (this.formSubscription !== undefined) {
@@ -181,69 +188,79 @@ export class GeneratorComponent {
 
     let index = this.vendorProducts.findIndex(x=>x.id == event.value.id)
 
-    this.qty = this.vendorProducts[index].qoh
+    if(index != -1){
+      this.qty = this.vendorProducts[index].qoh
+      this.numberArray =  Array(this.qty).fill(0).map((x, i) => i + 1);
+      this.pickedProduct = true;
+    }
 
-    this.numberArray =  Array(this.qty).fill(0).map((x, i) => i + 1);
+    const expenseSubscription = this.generatorForm
+    .get('expenseid')
+    ?.valueChanges.subscribe((val) => {
+      this.selectedProduct = val;
+    })
+
+
   }
 
   onPickExpense(): void {
-    console.log("onPickExpense")
-    console.log(this.selectedProduct)
     const expenseSubscription = this.generatorForm
       .get('qtyControl')
       ?.valueChanges.subscribe((val) => {
         this.hasExpenses = true;
 
-        this.selectedProduct = val;
-        const item: Product = {
-          id: this.selectedProduct.id,
-          vendorid: 0,
-          name: '',
-          costprice: 0,
-          msrp: 0,
-          rop: 0,
-          eoq: 0,
-          qoh: 0,
-          qoo: 0,
-          qrcode: '',
-          qrcodetxt: '',
-          // expenseid: this.selectedExpense?.id,
-        };
+        const selectedValue = val;
+        this.qtySelected = selectedValue;
+
         if (
           this.items.find((item) => item.productid === this.selectedProduct?.id)
-        ) {
-          // ignore entry
-        } else {
-          // add entry
-
-          const orderLine: PurchaseOrderLineItem = {
-            id: this.selectedVendor.id,
-            poid: 0,
-            productid: item.id,
-            qty: this.selectedProduct.qoh,
-            price: this.total,
-          };
-
-          console.log("adding selected")
-          console.log(orderLine)
-          this.items.push(orderLine);
-          this.selectedProducts.push(this.selectedProduct);
-        }
-
-        this.total = 0.0;
+        )
+        this.total =0;
         this.selectedProducts.forEach((exp) => (this.total += exp.msrp));
       });
 
 
     this.formSubscription?.add(expenseSubscription); // add it as a child, so all can be destroyed together
 
-    if(this.qty>0){
-      console.log("choosing")
-    }
   } // onPickExpense
   /**
    * createReport - create the client side report
    */
+
+  addProduct():void{
+    this.hasProducts = true;
+
+    const item: Product = {
+      id: this.selectedProduct.id,
+      vendorid: 0,
+      name: '',
+      costprice: 0,
+      msrp: 0,
+      rop: 0,
+      eoq: 0,
+      qoh: 0,
+      qoo: 0,
+      qrcode: '',
+      qrcodetxt: '',
+      // expenseid: this.selectedExpense?.id,
+    };
+
+    const orderLine: PurchaseOrderLineItem = {
+      id: this.selectedVendor.id,
+      poid: 0,
+      productid: item.id,
+      qty: this.qtySelected,
+      price: this.selectedProduct.msrp*this.qty,
+    };
+
+
+    this.items.push(orderLine);
+    this.registeredProducts.push(orderLine);
+
+    this.total = 0;
+    this.registeredProducts.forEach((exp) => (this.total += exp.price));
+  }
+
   createReport(): void {
     this.generated = false;
     const purchase: PurchaseOrder = {
@@ -253,8 +270,6 @@ export class GeneratorComponent {
       items: this.items,
     };
 
-    console.log('sending for API ');
-    console.log(purchase);
     this.reportService.create(purchase).subscribe({
       // observer object
       next: (purchase: PurchaseOrder) => {
@@ -267,10 +282,17 @@ export class GeneratorComponent {
       error: (err: Error) => (this.msg = `Report not added! - ${err.message}`),
       complete: () => {
         this.hasExpenses = false;
-        this.pickedEmployee = false;
+        this.pickedEmployee = true;
         this.pickedExpense = false;
         this.generated = true;
+        this.total  = 0 ;
+        this.qty = 0;
+        this.registeredProducts=[];
+        this.selectedProducts = [];
+        this.hasProducts=false;
       },
     });
+
+
   } // createReport
 }
