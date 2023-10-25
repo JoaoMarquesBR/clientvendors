@@ -106,6 +106,12 @@
           Save Report
         </button>
       </div>
+
+      <div style="text-align: center" *ngIf="reportCreated">
+        <button mat-raised-button color="primary" (click)="viewPurchaseOrder()" style="margin-top: 3vh">
+          View Purchase Order
+        </button>
+      </div>
     </form>
   </mat-card-content>
 </mat-card>

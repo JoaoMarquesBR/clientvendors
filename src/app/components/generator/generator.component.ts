@@ -15,6 +15,8 @@ import { Product } from 'src/app/entities/Product';
 import { Vendor } from 'src/app/entities/Vendor';
 import { PurchaseOrder } from 'src/app/entities/PurchaseOrder';
 import { PurchaseOrderLineItem } from 'src/app/entities/PurchaseOrderLineItem';
+import { ViewportRuler } from '@angular/cdk/scrolling';
+import { PDFURL } from 'src/app/enviroment';
 
 @Component({
   selector: 'app-generator',
@@ -41,6 +43,7 @@ export class GeneratorComponent {
   selectedVendor: Vendor; // the current selected employee
   registeredProducts: PurchaseOrderLineItem[]= [];
   qtySelected : number = 1;
+  reportCreated : boolean =false;
 
   // misc
   pickedExpense: boolean;
@@ -142,7 +145,7 @@ export class GeneratorComponent {
       next: (expenses: Product[]) => {
         this.vendorProducts = expenses;
         this.qty = this.vendorProducts[0].qoh
-        this.numberArray =  Array(this.qty).fill(0).map((x, i) => i + 1);
+        this.numberArray = [0, ...Array(this.qty - 1).fill(0).map((x, i) => i + 1)];
       },
       error: (err: Error) =>
         (this.msg = `product fetch failed! - ${err.message}`),
@@ -190,7 +193,7 @@ export class GeneratorComponent {
 
     if(index != -1){
       this.qty = this.vendorProducts[index].qoh
-      this.numberArray =  Array(this.qty).fill(0).map((x, i) => i + 1);
+      this.numberArray = [0, ...Array(this.qty - 1).fill(0).map((x, i) => i + 1)];
       this.pickedProduct = true;
     }
 
@@ -245,20 +248,34 @@ export class GeneratorComponent {
       // expenseid: this.selectedExpense?.id,
     };
 
+
     const orderLine: PurchaseOrderLineItem = {
       id: this.selectedVendor.id,
       poid: 0,
       productid: item.id,
       qty: this.qtySelected,
-      price: this.selectedProduct.msrp*this.qty,
+      price: this.selectedProduct.msrp* this.qtySelected,
     };
 
+    console.log(orderLine)
 
     this.items.push(orderLine);
     this.registeredProducts.push(orderLine);
 
     this.total = 0;
     this.registeredProducts.forEach((exp) => (this.total += exp.price));
+
+    const selectedProductIndex = this.vendorProducts.findIndex(x => item.id === x.id);
+
+    if (selectedProductIndex !== -1) {
+        this.vendorProducts.splice(selectedProductIndex, 1);
+    }
+
+    this.pickedProduct = false;
+  }
+
+  viewPurchaseOrder():void{
+    window.open(`${PDFURL}${this.reportno}`, '');
   }
 
   createReport(): void {
@@ -293,6 +310,7 @@ export class GeneratorComponent {
       },
     });
 
+    this.reportCreated=true;
 
   } // createReport
 }
